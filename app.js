@@ -1,6 +1,7 @@
 const express = require('express');
 const path = require('path');
 const indexRouter = require('./routes/index');
+const apiRouter = require('./routes/api');
 
 const app = express();
 const PORT = 3000;
@@ -10,6 +11,9 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 // Use the router for handling routes
 app.use('/', indexRouter);
+
+// Use the router for handling API routes
+app.use('/api/', apiRouter);
 
 // Catch-all route for handling 404 errors
 app.use((req, res, next) => {

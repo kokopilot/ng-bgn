@@ -6,9 +6,12 @@
   "author": "ngbgn",
   "license": "MIT",
   "dependencies": {
-    "express": "^4.19.2"
+    "csv": "^6.3.11",
+    "express": "^4.19.2",
+    "image-collage-maker": "^1.0.3",
+    "nodemon": "^3.1.9"
   },
   "scripts": {
-    "start": "node app.js"
+    "start": "nodemon app.js"
   }
 }

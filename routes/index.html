@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rotation</title>
+    <style>
+        body .lists {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            align-items: center;
+            background-color: #f0f0f0;
+        }
+
+        #selected {
+            top: 0;
+            width: 100%;
+            position: sticky;
+            border: 1px solid #000;
+            border-radius: 5px;
+            background-color: #7088e9;
+        }
+
+        .listing {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin: 10px;
+            padding: 10px;
+            border: 1px solid #000;
+            border-radius: 5px;
+            background-color: #fff;
+        }
+
+        img {
+            width: 200px;
+            height: 200px;
+            object-fit: cover;
+            border-radius: 5px;
+        }
+
+        h2 {
+            margin: 10px 0;
+        }
+
+        .selected {
+            background-color: #7088e9;
+        }
+    </style>
+    <style>
+        /* The Modal (background) */
+        .modal {
+            display: none;
+            /* Hidden by default */
+            position: fixed;
+            /* Stay in place */
+            z-index: 1;
+            /* Sit on top */
+            padding-top: 100px;
+            /* Location of the box */
+            left: 0;
+            top: 0;
+            width: 100%;
+            /* Full width */
+            height: 100%;
+            /* Full height */
+            overflow: auto;
+            /* Enable scroll if needed */
+            background-color: rgb(0, 0, 0);
+            /* Fallback color */
+            background-color: rgba(0, 0, 0, 0.9);
+            /* Black w/ opacity */
+        }
+
+        /* Modal Content (Image) */
+        .modal-content {
+            margin: auto;
+            display: block;
+            width: 80%;
+            max-width: 1150px;
+        }
+
+        /* Caption of Modal Image (Image Text) - Same Width as the Image */
+        #caption {
+            margin: auto;
+            display: block;
+            width: 80%;
+            max-width: 700px;
+            text-align: center;
+            color: #ccc;
+            padding: 10px 0;
+            height: 150px;
+        }
+
+        /* Add Animation - Zoom in the Modal */
+        .modal-content,
+        #caption {
+            animation-name: zoom;
+            animation-duration: 0.6s;
+        }
+
+        @keyframes zoom {
+            from {
+                transform: scale(0)
+            }
+
+            to {
+                transform: scale(1)
+            }
+        }
+
+        /* The Close Button */
+        .close {
+            position: absolute;
+            top: 15px;
+            right: 35px;
+            color: #f1f1f1;
+            font-size: 40px;
+            font-weight: bold;
+            transition: 0.3s;
+        }
+
+        .close:hover,
+        .close:focus {
+            color: #bbb;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        /* 100% Image Width on Smaller Screens */
+        @media only screen and (max-width: 700px) {
+            .modal-content {
+                width: 100%;
+            }
+        }
+    </style>
+    <script>
+        selectedGames = [];
+
+        function createBody() {
+            const selected = document.createElement("div");
+            selected.classList.add("lists");
+            selected.id = "selected";
+            document.body.appendChild(selected);
+
+            const generate = document.createElement("button");
+            generate.textContent = "Generate";
+            generate.onclick = () => {
+                fetch("http://localhost:3000/api/generate?ids=" + selectedGames.toString())
+                    .then((response) => response.json())
+                    .then((data) => {
+                        console.log(data);
+                        var modal = document.getElementById("myModal");
+                        modal.style.display = "block";
+                        document.getElementById("img01").src = "gen/" + data.file;
+                        document.getElementById("caption").innerHTML = data.text;
+                        document.getElementsByClassName("close")[0].onclick = function () {
+                            modal.style.display = "none";
+                        }
+                    })
+                    .catch((error) => {
+                        console.error("Error:", error);
+                    });
+            }
+            selected.appendChild(generate);
+
+            const hr = document.createElement("hr");
+            document.body.appendChild(hr);
+
+            const all = document.createElement("div");
+            all.classList.add("lists");
+            all.id = "all";
+            document.body.appendChild(all);
+        }
+
+        function addSelected(game) {
+            let listing = document.createElement("div");
+            listing.classList.add("listing");
+            listing.id = "selected-" + game.id;
+            listing.onclick = function () {
+                listing.classList.toggle("selected");
+                if (selectedGames.includes(game.id)) {
+                    selectedGames = selectedGames.filter((id) => id != game.id);
+                    removeSelected(game);
+                } else {
+                    selectedGames.push(game.id);
+                    addSelected(game);
+                }
+            };
+            document.getElementById("selected").appendChild(listing);
+
+            let image = document.createElement("img");
+            image.src = "http://localhost:3000/images/" + game.id + ".jpg";
+            listing.appendChild(image);
+
+            let title = document.createElement("h2");
+            title.textContent = game.name;
+            listing.appendChild(title);
+        }
+
+        function removeSelected(game) {
+            document.getElementById("selected-" + game.id).remove();
+            document.getElementById(game.id).classList.remove("selected");
+        }
+
+        function createListing(game) {
+            let listing = document.createElement("div");
+            listing.classList.add("listing");
+            listing.id = game.id;
+            listing.onclick = function () {
+                listing.classList.toggle("selected");
+                if (selectedGames.includes(game.id)) {
+                    selectedGames = selectedGames.filter((id) => id != game.id);
+                    removeSelected(game);
+                } else {
+                    selectedGames.push(game.id);
+                    addSelected(game);
+                }
+                console.log(selectedGames);
+            };
+            document.getElementById("all").appendChild(listing);
+
+            let image = document.createElement("img");
+            image.src = "http://localhost:3000/images/" + game.id + ".jpg";
+            listing.appendChild(image);
+
+            let title = document.createElement("h2");
+            title.textContent = game.name;
+            listing.appendChild(title);
+        }
+
+        fetch("http://localhost:3000/api/list")
+            .then((listPromise) => listPromise.json())
+            .then(function (list) {
+                createBody();
+                for (game of list) {
+                    createListing(game);
+                }
+            })
+            .catch(function (error) {
+                console.log(error);
+            });
+    </script>
+</head>
+
+<body>
+    <!-- <div id="selected"></div>
+    <hr>
+    <div id="all"></div> -->
+    <div id="myModal" class="modal">
+
+        <!-- The Close Button -->
+        <span class="close">&times;</span>
+
+        <!-- Modal Content (The Image) -->
+        <img class="modal-content" id="img01">
+
+        <!-- Modal Caption (Image Text) -->
+        <div id="caption"></div>
+    </div>
+</body>
+
+</html>

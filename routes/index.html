@@ -148,7 +148,7 @@
             const generate = document.createElement("button");
             generate.textContent = "Generate";
             generate.onclick = () => {
-                fetch("http://localhost:3000/api/generate?ids=" + selectedGames.toString())
+                fetch("/api/generate?ids=" + selectedGames.toString())
                     .then((response) => response.json())
                     .then((data) => {
                         console.log(data);
@@ -192,7 +192,7 @@
             document.getElementById("selected").appendChild(listing);
 
             let image = document.createElement("img");
-            image.src = "http://localhost:3000/images/" + game.id + ".jpg";
+            image.src = "/images/" + game.id + ".jpg";
             listing.appendChild(image);
 
             let title = document.createElement("h2");
@@ -223,7 +223,7 @@
             document.getElementById("all").appendChild(listing);
 
             let image = document.createElement("img");
-            image.src = "http://localhost:3000/images/" + game.id + ".jpg";
+            image.src = "/images/" + game.id + ".jpg";
             listing.appendChild(image);
 
             let title = document.createElement("h2");
@@ -231,7 +231,7 @@
             listing.appendChild(title);
         }
 
-        fetch("http://localhost:3000/api/list")
+        fetch("/api/list")
             .then((listPromise) => listPromise.json())
             .then(function (list) {
                 createBody();
